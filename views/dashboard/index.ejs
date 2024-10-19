@@ -1,0 +1,45 @@
+<%- include('../layout') %>
+
+<h1>Dashboard</h1>
+
+<div class="dashboard-stats">
+    <div class="stat-card">
+        <h3>Total Products</h3>
+        <p><%= totalProducts %></p>
+    </div>
+    <div class="stat-card">
+        <h3>Low Stock Products</h3>
+        <p><%= lowStockProducts %></p>
+    </div>
+</div>
+
+<h2>Recent Orders</h2>
+<table class="table">
+    <thead>
+        <tr>
+            <th>Order ID</th>
+            <th>Total Amount</th>
+            <th>Date</th>
+        </tr>
+    </thead>
+    <tbody>
+        <% recentOrders.forEach(order => { %>
+            <tr>
+                <td><%= order.id %></td>
+                <td>$<%= order.total_amount %></td>
+                <td><%= order.created_at %></td>
+            </tr>
+        <% }) %>
+    </tbody>
+</table>
+
+<canvas id="salesChart" width="400" height="200"></canvas>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const ctx = document.getElementById('salesChart').getContext('2d');
+    const labels = ['January', 'February', 'March', 'April', 'May', 'June'];
+    const data = [12, 19, 3, 5, 2, 3];
+    createLineChart(ctx, labels, data);
+});
+</script>

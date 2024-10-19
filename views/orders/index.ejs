@@ -1,0 +1,29 @@
+<%- include('../layout') %>
+
+<h1>Orders</h1>
+
+<a href="/orders/add" class="btn">Create New Order</a>
+
+<table>
+    <thead>
+        <tr>
+            <th>Order ID</th>
+            <th>Total Amount</th>
+            <th>Date</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        <% orders.forEach(order => { %>
+            <tr>
+                <td><%= order.id %></td>
+                <td>$<%= order.total_amount %></td>
+                <td><%= order.created_at %></td>
+                <td>
+                    <a href="/orders/view/<%= order.id %>" class="btn btn-small">View</a>
+                    <a href="/orders/invoice/<%= order.id %>" class="btn btn-small">Generate Invoice</a>
+                </td>
+            </tr>
+        <% }) %>
+    </tbody>
+</table>

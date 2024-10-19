@@ -1,0 +1,29 @@
+<%- include('../layout') %>
+
+<h1>Generate Report</h1>
+
+<form action="/reports/generate" method="POST">
+    <div>
+        <label for="reportType">Report Type:</label>
+        <select id="reportType" name="reportType" required>
+            <option value="inventory">Inventory Report</option>
+            <option value="sales">Sales Report</option>
+        </select>
+    </div>
+    <div>
+        <label for="startDate">Start Date:</label>
+        <input type="date" id="startDate" name="startDate" required>
+    </div>
+    <div>
+        <label for="endDate">End Date:</label>
+        <input type="date" id="endDate" name="endDate" required>
+    </div>
+    <div>
+        <label for="format">Format:</label>
+        <select id="format" name="format" required>
+            <option value="html">HTML</option>
+            <option value="excel">Excel</option>
+        </select>
+    </div>
+    <button type="submit">Generate Report</button>
+</form>

@@ -1,0 +1,89 @@
+<%- include('../layout') %>
+
+<h1>Create New Order</h1>
+
+<form id="orderForm">
+    <div id="orderItems">
+        <div class="order-item">
+            <select name="product" required>
+                <option value="">Select Product</option>
+                <% products.forEach(product => { %>
+                    <option value="<%= product.id %>" data-price="<%= product.price %>"><%= product.name %></option>
+                <% }) %>
+            </select>
+            <input type="number" name="quantity" min="1" value="1" required>
+            <span class="item-total">$0.00</span>
+        </div>
+    </div>
+    <button type="button" id="addItem">Add Item</button>
+    <div>
+        <strong>Total: $<span id="orderTotal">0.00</span></strong>
+    </div>
+    <button type="submit">Create Order</button>
+</form>
+
+<script>
+document.getElementById('addItem').addEventListener('click', function() {
+    const newItem = document.querySelector('.order-item').cloneNode(true);
+    newItem.querySelector('select').selectedIndex = 0;
+    newItem.querySelector('input[name="quantity"]').value = 1;
+    newItem.querySelector('.item-total').textContent = '$0.00';
+    document.getElementById('orderItems').appendChild(newItem);
+});
+
+document.getElementById('orderForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    const items = [];
+    const orderItems = document.querySelectorAll('.order-item');
+    orderItems.forEach(item => {
+        const productSelect = item.querySelector('select[name="product"]');
+        const quantity = item.querySelector('input[name="quantity"]').value;
+        items.push({
+            product_id: productSelect.value,
+            quantity: parseInt(quantity),
+            price: parseFloat(productSelect.options[productSelect.selectedIndex].dataset.price)
+        });
+    });
+
+    const totalAmount = parseFloat(document.getElementById('orderTotal').textContent);
+
+    fetch('/orders/add', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ items, total_amount: totalAmount }),
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            alert('Order created successfully!');
+            window.location.href = '/orders';
+        } else {
+            alert('Error creating order: ' + data.message);
+        }
+    })
+    .catch((error) => {
+        console.error('Error:', error);
+        alert('An error occurred while creating the order.');
+    });
+});
+
+// Add event listeners for updating totals
+document.getElementById('orderItems').addEventListener('change', updateTotals);
+document.getElementById('orderItems').addEventListener('input', updateTotals);
+
+function updateTotals() {
+    let orderTotal = 0;
+    const orderItems = document.querySelectorAll('.order-item');
+    orderItems.forEach(item => {
+        const productSelect = item.querySelector('select[name="product"]');
+        const quantity = item.querySelector('input[name="quantity"]').value;
+        const price = parseFloat(productSelect.options[productSelect.selectedIndex].dataset.price);
+        const itemTotal = price * quantity;
+        item.querySelector('.item-total').textContent = '$' + itemTotal.toFixed(2);
+        orderTotal += itemTotal;
+    });
+    document.getElementById('orderTotal').textContent = orderTotal.toFixed(2);
+}
+</script>
